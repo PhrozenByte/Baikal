@@ -1,4 +1,5 @@
 <?php
+
 #################################################################
 #  Copyright notice
 #
@@ -23,7 +24,6 @@
 #
 #  This copyright notice MUST APPEAR in all copies of the script!
 #################################################################
-
 
 namespace Baikal\Core;
 
@@ -60,7 +60,6 @@ class Tools {
     }
 
     static function assertBaikalIsOk() {
-
         # DB connexion has not been asserted earlier by Flake, to give us a chance to trigger the install tool
         # We assert it right now
         if (!\Flake\Framework::isDBInitialized() && (!defined("BAIKAL_CONTEXT_INSTALL") || BAIKAL_CONTEXT_INSTALL === false)) {
@@ -73,33 +72,18 @@ class Tools {
         #}
 
         # Asserting config file exists
-        if (!file_exists(PROJECT_PATH_SPECIFIC . "config.php")) {
-            throw new \Exception("Specific/config.php does not exist. Please use the Install tool to create it.");
+        if (!file_exists(PROJECT_PATH_CONFIG . "baikal.yaml")) {
+            throw new \Exception("config/baikal.yaml does not exist. Please use the Install tool to create it or duplicate baikal.yaml.dist.");
         }
 
         # Asserting config file is readable
-        if (!is_readable(PROJECT_PATH_SPECIFIC . "config.php")) {
-            throw new \Exception("Specific/config.php is not readable. Please give read permissions to httpd user on file 'Specific/config.php'.");
+        if (!is_readable(PROJECT_PATH_CONFIG . "baikal.yaml")) {
+            throw new \Exception("config/baikal.yaml is not readable. Please give read permissions to httpd user on file 'config/baikal.yaml'.");
         }
 
         # Asserting config file is writable
-        if (!is_writable(PROJECT_PATH_SPECIFIC . "config.php")) {
-            throw new \Exception("Specific/config.php is not writable. Please give write permissions to httpd user on file 'Specific/config.php'.");
-        }
-
-        # Asserting system config file exists
-        if (!file_exists(PROJECT_PATH_SPECIFIC . "config.system.php")) {
-            throw new \Exception("Specific/config.system.php does not exist. Please use the Install tool to create it.");
-        }
-
-        # Asserting system config file is readable
-        if (!is_readable(PROJECT_PATH_SPECIFIC . "config.system.php")) {
-            throw new \Exception("Specific/config.system.php is not readable. Please give read permissions to httpd user on file 'Specific/config.system.php'.");
-        }
-
-        # Asserting system config file is writable
-        if (!is_writable(PROJECT_PATH_SPECIFIC . "config.system.php")) {
-            throw new \Exception("Specific/config.system.php is not writable. Please give write permissions to httpd user on file 'Specific/config.system.php'.");
+        if (!is_writable(PROJECT_PATH_CONFIG . "baikal.yaml")) {
+            throw new \Exception("config/baikal.yaml is not writable. Please give write permissions to httpd user on file 'config/baikal.yaml'.");
         }
     }
 
@@ -117,7 +101,6 @@ class Tools {
     }
 
     static function isDBStructurallyComplete(\Flake\Core\Database $oDB) {
-
         $aRequiredTables = self::getRequiredTablesList();
         $aPresentTables = $oDB->tables();
 
@@ -134,6 +117,7 @@ class Tools {
         @flush();
         @ob_flush();
         $confirmation = @trim(fgets(STDIN));
+
         return $confirmation;
     }
 
@@ -142,6 +126,7 @@ class Tools {
 
         if (rtrim(shell_exec($command)) !== 'OK') {
             trigger_error("Can't invoke bash");
+
             return;
         }
 
@@ -151,11 +136,11 @@ class Tools {
 
         $password = rtrim(shell_exec($command));
         echo "\n";
+
         return $password;
     }
 
     static function getCopyrightNotice($sLinePrefixChar = "#", $sLineSuffixChar = "", $sOpening = false, $sClosing = false) {
-
         if ($sOpening === false) {
             $sOpening = str_repeat("#", 78);
         }
@@ -211,6 +196,7 @@ CODE;
         $aZones = \DateTimeZone::listIdentifiers();
 
         reset($aZones);
+
         return $aZones;
     }
 }
